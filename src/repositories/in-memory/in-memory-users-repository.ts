@@ -5,6 +5,10 @@ import type { UsersRepository } from "../users-repository.js"
 export class InMemoryUsersRepository implements UsersRepository {
 	items: User[] = []
 
+	async findById(id: string) {
+		return this.items.find((user) => user.id === id) ?? null
+	}
+
 	async findByEmail(email: string) {
 		return this.items.find((user) => user.email === email) ?? null
 	}

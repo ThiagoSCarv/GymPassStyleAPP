@@ -1,3 +1,4 @@
+import type { Gym } from "@prisma/client"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { InMemoryCheckInsRepository } from "@/repositories/in-memory/in-memory-check-ins-repository.js"
 import { InMemoryGymsRepository } from "@/repositories/in-memory/in-memory-gyms-repository.js"
@@ -9,6 +10,7 @@ import { ResourceNotFoundError } from "./errors/resource-not-found-error.js"
 let checkInsRepository: InMemoryCheckInsRepository
 let gymsRepository: InMemoryGymsRepository
 let sut: CheckInUseCase
+let gym: Gym
 
 const GYM_LATITUDE = -27.2092052
 const GYM_LONGITUDE = -49.6401091
@@ -18,7 +20,7 @@ beforeEach(async () => {
 	gymsRepository = new InMemoryGymsRepository()
 	sut = new CheckInUseCase(checkInsRepository, gymsRepository)
 
-	await gymsRepository.create({
+	gym = await gymsRepository.create({
 		title: "Test Gym",
 		latitude: GYM_LATITUDE,
 		longitude: GYM_LONGITUDE,
@@ -33,8 +35,6 @@ afterEach(() => {
 
 describe("CheckInUseCase", () => {
 	it("should create a check-in when user is within range", async () => {
-		const gym = gymsRepository.items[0]
-
 		const { checkIn } = await sut.execute({
 			userId: "user-01",
 			gymId: gym.id,
@@ -59,8 +59,6 @@ describe("CheckInUseCase", () => {
 	})
 
 	it("should throw MaxDistanceError when user is more than 100m from gym", async () => {
-		const gym = gymsRepository.items[0]
-
 		await expect(
 			sut.execute({
 				userId: "user-01",
@@ -72,8 +70,6 @@ describe("CheckInUseCase", () => {
 	})
 
 	it("should throw MaxNumberOfCheckInsError on second check-in same day", async () => {
-		const gym = gymsRepository.items[0]
-
 		vi.setSystemTime(new Date(2024, 0, 20, 8, 0, 0))
 
 		await sut.execute({
@@ -94,8 +90,6 @@ describe("CheckInUseCase", () => {
 	})
 
 	it("should allow check-in on a different day", async () => {
-		const gym = gymsRepository.items[0]
-
 		vi.setSystemTime(new Date(2024, 0, 20, 8, 0, 0))
 
 		await sut.execute({
