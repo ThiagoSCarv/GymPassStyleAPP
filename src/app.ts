@@ -7,6 +7,7 @@ import {
 	serializerCompiler,
 	validatorCompiler,
 } from "fastify-type-provider-zod";
+import { env } from "./env/index.js";
 
 export const app = fastify({ logger: true });
 
@@ -27,4 +28,18 @@ await app.register(fastifySwagger, {
 
 await app.register(ScalarApiReference, {
 	routePrefix: "/docs",
+});
+
+app.setErrorHandler((error, _request, reply) => {
+	if (env.NODE_ENV === "development") {
+		console.error(error);
+	}
+
+	// TODO: log to error tracking service in production (Datadog, New Relic, Sentry, etc.)
+
+	if (error.statusCode) {
+		return reply.status(error.statusCode).send({ message: error.message });
+	}
+
+	return reply.status(500).send({ message: "Internal server error." });
 });
