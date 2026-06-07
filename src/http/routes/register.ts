@@ -1,8 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { type ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-repository.js";
-import { RegisterUseCase } from "@/use-cases/register.js";
+import { makeRegisterUseCase } from "@/use-cases/factories/make-register-use-case.js";
 import { UserAlreadyExistsError } from "@/use-cases/errors/user-already-exists-error.js";
 
 export async function registerRoute(app: FastifyInstance) {
@@ -25,8 +24,7 @@ export async function registerRoute(app: FastifyInstance) {
 		handler: async (request, reply) => {
 			const { name, email, password } = request.body;
 
-			const usersRepository = new PrismaUsersRepository();
-			const registerUseCase = new RegisterUseCase(usersRepository);
+			const registerUseCase = makeRegisterUseCase();
 
 			try {
 				await registerUseCase.execute({ name, email, password });
