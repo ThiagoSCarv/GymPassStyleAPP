@@ -14,7 +14,7 @@ export const app = fastify({ logger: true });
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
-await app.register(fastifySwagger, {
+app.register(fastifySwagger, {
 	openapi: {
 		info: {
 			title: "Solid Node API",
@@ -26,7 +26,7 @@ await app.register(fastifySwagger, {
 	transformObject: jsonSchemaTransformObject,
 });
 
-await app.register(ScalarApiReference, {
+app.register(ScalarApiReference, {
 	routePrefix: "/docs",
 });
 
