@@ -1,3 +1,4 @@
+import fastifyJwt from "@fastify/jwt";
 import fastifySwagger from "@fastify/swagger";
 import ScalarApiReference from "@scalar/fastify-api-reference";
 import fastify from "fastify";
@@ -13,6 +14,8 @@ export const app = fastify({ logger: true });
 
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
+
+app.register(fastifyJwt, { secret: env.JWT_SECRET });
 
 app.register(fastifySwagger, {
 	openapi: {
