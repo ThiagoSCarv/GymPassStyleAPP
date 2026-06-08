@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { healthRoute } from "./routes/health.js";
-import { createGymRoute } from "./routes/gyms/create.js"
+import { createGymRoute } from "./routes/gyms/create.js";
 import { validateCheckInRoute } from "./routes/check-ins/validate.js";
 import { fetchNearbyGymsRoute } from "./routes/gyms/nearby.js";
 import { searchGymsRoute } from "./routes/gyms/search.js";
@@ -9,6 +9,7 @@ import { fetchCheckInsHistoryRoute } from "./routes/check-ins/history.js";
 import { getUserMetricsRoute } from "./routes/check-ins/metrics.js";
 import { authenticateRoute } from "./routes/users/authenticate.js";
 import { profileRoute } from "./routes/users/profile.js";
+import { logoutRoute } from "./routes/users/logout.js";
 import { refreshRoute } from "./routes/users/refresh.js";
 import { registerRoute } from "./routes/users/register.js";
 import { verifyJwt } from "./middlewares/verify-jwt.js";
@@ -19,6 +20,7 @@ export async function appRoutes(app: FastifyInstance) {
 	app.register(registerRoute);
 	app.register(authenticateRoute);
 	app.register(refreshRoute);
+	app.register(logoutRoute);
 
 	app.register(async (protectedApp) => {
 		protectedApp.addHook("onRequest", verifyJwt);
