@@ -3,6 +3,7 @@ import { type ZodTypeProvider } from "fastify-type-provider-zod"
 import { z } from "zod"
 import { makeAuthenticateUseCase } from "@/use-cases/factories/make-authenticate-use-case.js"
 import { InvalidCredentialsError } from "@/use-cases/errors/invalid-credentials-error.js"
+import { env } from "@/env/index.js"
 
 export async function authenticateRoute(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().route({
@@ -30,10 +31,24 @@ export async function authenticateRoute(app: FastifyInstance) {
 
 				const token = await reply.jwtSign(
 					{ role: user.role },
-					{ sign: { sub: user.id } },
+					{ sign: { sub: user.id, expiresIn: "1h" } },
 				)
 
-				return reply.status(200).send({ token })
+				const refreshToken = await reply.jwtSign(
+					{ role: user.role },
+					{ sign: { sub: user.id, expiresIn: "30d", audience: "refresh" } },
+				)
+
+				return reply
+					.setCookie("refreshToken", refreshToken, {
+						path: "/",
+						httpOnly: true,
+						secure: env.NODE_ENV === "production",
+						sameSite: "lax",
+						maxAge: 60 * 60 * 24 * 30,
+					})
+					.status(200)
+					.send({ token })
 			} catch (err) {
 				if (err instanceof InvalidCredentialsError) {
 					return reply.status(401).send({ message: err.message })

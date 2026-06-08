@@ -66,4 +66,24 @@ describe("POST /sessions", () => {
 
 		expect(response.status).toBe(400)
 	})
+
+	it("should set a refreshToken httponly cookie on successful authentication", async () => {
+		await supertest(app.server).post("/users").send({
+			name: "John Doe",
+			email: "johndoe@example.com",
+			password: "123456",
+		})
+
+		const response = await supertest(app.server).post("/sessions").send({
+			email: "johndoe@example.com",
+			password: "123456",
+		})
+
+		expect(response.status).toBe(200)
+
+		const setCookieHeader = response.headers["set-cookie"] as string[] | string
+		const cookies = Array.isArray(setCookieHeader) ? setCookieHeader : [setCookieHeader]
+		expect(cookies.some((c) => c.startsWith("refreshToken="))).toBe(true)
+		expect(cookies.some((c) => c.includes("HttpOnly"))).toBe(true)
+	})
 })
