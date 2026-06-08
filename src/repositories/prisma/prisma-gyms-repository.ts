@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client"
+import type { Gym, Prisma } from "@prisma/client"
 import { prisma } from "@/lib/prisma.js"
 import type { FindManyNearbyParams, GymsRepository } from "../gyms-repository.js"
 
@@ -15,12 +15,18 @@ export class PrismaGymsRepository implements GymsRepository {
 		const latDelta = 10 / 111
 		const lngDelta = 10 / (111 * Math.cos((latitude * Math.PI) / 180))
 
-		return prisma.gym.findMany({
-			where: {
-				latitude: { gte: latitude - latDelta, lte: latitude + latDelta },
-				longitude: { gte: longitude - lngDelta, lte: longitude + lngDelta },
-			},
-		})
+		return prisma.$queryRaw<Gym[]>`
+			SELECT * FROM gyms
+			WHERE latitude  BETWEEN ${latitude  - latDelta} AND ${latitude  + latDelta}
+			  AND longitude BETWEEN ${longitude - lngDelta} AND ${longitude + lngDelta}
+			  AND (
+			    6371 * acos(
+			        cos(radians(${latitude})) * cos(radians(latitude)) *
+			        cos(radians(longitude) - radians(${longitude})) +
+			        sin(radians(${latitude})) * sin(radians(latitude))
+			    )
+			  ) <= 10
+		`
 	}
 
 	async findById(id: string) {
