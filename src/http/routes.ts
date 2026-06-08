@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { healthRoute } from "./routes/health.js";
-import { createGymRoute } from "./routes/gyms/create.js";
+import { createGymRoute } from "./routes/gyms/create.js"
+import { validateCheckInRoute } from "./routes/check-ins/validate.js";
 import { fetchNearbyGymsRoute } from "./routes/gyms/nearby.js";
 import { searchGymsRoute } from "./routes/gyms/search.js";
 import { checkInRoute } from "./routes/gyms/check-in.js";
@@ -29,6 +30,7 @@ export async function appRoutes(app: FastifyInstance) {
 		protectedApp.register(async (adminApp) => {
 			adminApp.addHook("onRequest", verifyUserRole("ADMIN"));
 			adminApp.register(createGymRoute);
+			adminApp.register(validateCheckInRoute);
 		});
 	});
 }
