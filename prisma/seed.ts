@@ -42,6 +42,13 @@ const gyms = [
 		latitude: -23.6012,
 		longitude: -46.6661,
 	},
+	{
+		title: "FitZone Guarulhos",
+		description: "Academia em Guarulhos, fora do raio de 10 km do centro de SP",
+		phone: "(11) 2440-8800",
+		latitude: -23.4543,
+		longitude: -46.5333,
+	},
 ]
 
 async function main() {
