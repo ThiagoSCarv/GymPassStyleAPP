@@ -31,7 +31,7 @@ export async function authenticateRoute(app: FastifyInstance) {
 
 				const token = await reply.jwtSign(
 					{ role: user.role },
-					{ sign: { sub: user.id, expiresIn: "1h" } },
+					{ sign: { sub: user.id, expiresIn: "1h", audience: "access" } },
 				)
 
 				const refreshToken = await reply.jwtSign(

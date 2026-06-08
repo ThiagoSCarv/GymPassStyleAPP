@@ -85,5 +85,8 @@ describe("POST /sessions", () => {
 		const cookies = Array.isArray(setCookieHeader) ? setCookieHeader : [setCookieHeader]
 		expect(cookies.some((c) => c.startsWith("refreshToken="))).toBe(true)
 		expect(cookies.some((c) => c.includes("HttpOnly"))).toBe(true)
+		expect(cookies.some((c) => c.includes("Path=/"))).toBe(true)
+		expect(cookies.some((c) => c.toLowerCase().includes("samesite=lax"))).toBe(true)
+		expect(cookies.some((c) => c.includes("Max-Age="))).toBe(true)
 	})
 })
