@@ -1,19 +1,19 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest"
-import { prisma } from "@/lib/prisma.js"
-import { PrismaGymsRepository } from "./prisma-gyms-repository.js"
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { prisma } from "@/lib/prisma.js";
+import { PrismaGymsRepository } from "./prisma-gyms-repository.js";
 
-const USER_LAT = -27.2092052
-const USER_LNG = -49.6401091
+const USER_LAT = -27.2092052;
+const USER_LNG = -49.6401091;
 
-let sut: PrismaGymsRepository
+let sut: PrismaGymsRepository;
 
 beforeEach(() => {
-	sut = new PrismaGymsRepository()
-})
+	sut = new PrismaGymsRepository();
+});
 
 afterEach(async () => {
-	await prisma.gym.deleteMany()
-})
+	await prisma.gym.deleteMany();
+});
 
 describe("PrismaGymsRepository.findManyNearby", () => {
 	it("should return a gym within 10km", async () => {
@@ -25,13 +25,16 @@ describe("PrismaGymsRepository.findManyNearby", () => {
 				latitude: USER_LAT,
 				longitude: USER_LNG,
 			},
-		})
+		});
 
-		const gyms = await sut.findManyNearby({ latitude: USER_LAT, longitude: USER_LNG })
+		const gyms = await sut.findManyNearby({
+			latitude: USER_LAT,
+			longitude: USER_LNG,
+		});
 
-		expect(gyms).toHaveLength(1)
-		expect(gyms[0].title).toBe("Academia Próxima")
-	})
+		expect(gyms).toHaveLength(1);
+		expect(gyms[0].title).toBe("Academia Próxima");
+	});
 
 	it("should not return a gym that is inside the bounding box but farther than 10km diagonally", async () => {
 		// Este ponto está a ~11km da posição do usuário (diagonal),
@@ -47,10 +50,13 @@ describe("PrismaGymsRepository.findManyNearby", () => {
 				latitude: USER_LAT + 0.07,
 				longitude: USER_LNG + 0.08,
 			},
-		})
+		});
 
-		const gyms = await sut.findManyNearby({ latitude: USER_LAT, longitude: USER_LNG })
+		const gyms = await sut.findManyNearby({
+			latitude: USER_LAT,
+			longitude: USER_LNG,
+		});
 
-		expect(gyms).toHaveLength(0)
-	})
-})
+		expect(gyms).toHaveLength(0);
+	});
+});

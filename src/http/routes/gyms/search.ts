@@ -1,7 +1,7 @@
-import type { FastifyInstance } from "fastify"
-import { type ZodTypeProvider } from "fastify-type-provider-zod"
-import { z } from "zod"
-import { makeSearchGymsUseCase } from "@/use-cases/factories/make-search-gyms-use-case.js"
+import type { FastifyInstance } from "fastify";
+import { type ZodTypeProvider } from "fastify-type-provider-zod";
+import { z } from "zod";
+import { makeSearchGymsUseCase } from "@/use-cases/factories/make-search-gyms-use-case.js";
 
 export async function searchGymsRoute(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().route({
@@ -31,13 +31,13 @@ export async function searchGymsRoute(app: FastifyInstance) {
 			},
 		},
 		handler: async (request, reply) => {
-			const { q, page } = request.query
+			const { q, page } = request.query;
 
-			const searchGymsUseCase = makeSearchGymsUseCase()
+			const searchGymsUseCase = makeSearchGymsUseCase();
 
-			const { gyms } = await searchGymsUseCase.execute({ query: q, page })
+			const { gyms } = await searchGymsUseCase.execute({ query: q, page });
 
-			return reply.status(200).send({ gyms })
+			return reply.status(200).send({ gyms });
 		},
-	})
+	});
 }

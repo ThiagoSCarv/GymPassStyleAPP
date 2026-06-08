@@ -1,48 +1,50 @@
-import { randomUUID } from "node:crypto"
-import dayjs from "dayjs"
-import type { CheckIn, Prisma } from "@prisma/client"
-import type { CheckInsRepository } from "../check-ins-repository.js"
+import { randomUUID } from "node:crypto";
+import dayjs from "dayjs";
+import type { CheckIn, Prisma } from "@prisma/client";
+import type { CheckInsRepository } from "../check-ins-repository.js";
 
 export class InMemoryCheckInsRepository implements CheckInsRepository {
-	items: CheckIn[] = []
+	items: CheckIn[] = [];
 
 	async create(data: Prisma.CheckInUncheckedCreateInput) {
 		const checkIn: CheckIn = {
 			id: randomUUID(),
 			user_id: data.user_id,
 			gym_id: data.gym_id,
-			validated_at: data.validated_at ? new Date(data.validated_at as string) : null,
+			validated_at: data.validated_at
+				? new Date(data.validated_at as string)
+				: null,
 			created_at: new Date(),
-		}
+		};
 
-		this.items.push(checkIn)
+		this.items.push(checkIn);
 
-		return checkIn
+		return checkIn;
 	}
 
 	async findById(id: string) {
-		return this.items.find((item) => item.id === id) ?? null
+		return this.items.find((item) => item.id === id) ?? null;
 	}
 
 	async save(checkIn: CheckIn) {
-		const index = this.items.findIndex((item) => item.id === checkIn.id)
-		if (index >= 0) this.items[index] = checkIn
-		return checkIn
+		const index = this.items.findIndex((item) => item.id === checkIn.id);
+		if (index >= 0) this.items[index] = checkIn;
+		return checkIn;
 	}
 
 	async countByUserId(userId: string) {
-		return this.items.filter((item) => item.user_id === userId).length
+		return this.items.filter((item) => item.user_id === userId).length;
 	}
 
 	async findManyByUserId(userId: string, page: number) {
 		return this.items
 			.filter((item) => item.user_id === userId)
-			.slice((page - 1) * 20, page * 20)
+			.slice((page - 1) * 20, page * 20);
 	}
 
 	async findByUserIdOnDate(userId: string, date: Date) {
-		const startOfDay = dayjs(date).startOf("day").toDate()
-		const endOfDay = dayjs(date).endOf("day").toDate()
+		const startOfDay = dayjs(date).startOf("day").toDate();
+		const endOfDay = dayjs(date).endOf("day").toDate();
 
 		return (
 			this.items.find(
@@ -51,6 +53,6 @@ export class InMemoryCheckInsRepository implements CheckInsRepository {
 					item.created_at >= startOfDay &&
 					item.created_at <= endOfDay,
 			) ?? null
-		)
+		);
 	}
 }

@@ -1,7 +1,7 @@
-import type { FastifyInstance } from "fastify"
-import { type ZodTypeProvider } from "fastify-type-provider-zod"
-import { z } from "zod"
-import { makeGetUserMetricsUseCase } from "@/use-cases/factories/make-get-user-metrics-use-case.js"
+import type { FastifyInstance } from "fastify";
+import { type ZodTypeProvider } from "fastify-type-provider-zod";
+import { z } from "zod";
+import { makeGetUserMetricsUseCase } from "@/use-cases/factories/make-get-user-metrics-use-case.js";
 
 export async function getUserMetricsRoute(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().route({
@@ -18,13 +18,13 @@ export async function getUserMetricsRoute(app: FastifyInstance) {
 			},
 		},
 		handler: async (request, reply) => {
-			const { sub: userId } = request.user
+			const { sub: userId } = request.user;
 
-			const getMetricsUseCase = makeGetUserMetricsUseCase()
+			const getMetricsUseCase = makeGetUserMetricsUseCase();
 
-			const { checkInsCount } = await getMetricsUseCase.execute({ userId })
+			const { checkInsCount } = await getMetricsUseCase.execute({ userId });
 
-			return reply.status(200).send({ checkInsCount })
+			return reply.status(200).send({ checkInsCount });
 		},
-	})
+	});
 }

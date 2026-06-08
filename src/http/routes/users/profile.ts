@@ -1,8 +1,8 @@
-import type { FastifyInstance } from "fastify"
-import { type ZodTypeProvider } from "fastify-type-provider-zod"
-import { z } from "zod"
-import { makeGetUserProfileUseCase } from "@/use-cases/factories/make-get-user-profile-use-case.js"
-import { ResourceNotFoundError } from "@/use-cases/errors/resource-not-found-error.js"
+import type { FastifyInstance } from "fastify";
+import { type ZodTypeProvider } from "fastify-type-provider-zod";
+import { z } from "zod";
+import { makeGetUserProfileUseCase } from "@/use-cases/factories/make-get-user-profile-use-case.js";
+import { ResourceNotFoundError } from "@/use-cases/errors/resource-not-found-error.js";
 
 export async function profileRoute(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().route({
@@ -25,23 +25,23 @@ export async function profileRoute(app: FastifyInstance) {
 			},
 		},
 		handler: async (request, reply) => {
-			const { sub: userId } = request.user
+			const { sub: userId } = request.user;
 
-			const getUserProfile = makeGetUserProfileUseCase()
+			const getUserProfile = makeGetUserProfileUseCase();
 
 			try {
-				const { user } = await getUserProfile.execute({ userId })
+				const { user } = await getUserProfile.execute({ userId });
 
-				const { password_hash: _, ...userWithoutPassword } = user
+				const { password_hash: _, ...userWithoutPassword } = user;
 
-				return reply.status(200).send({ user: userWithoutPassword })
+				return reply.status(200).send({ user: userWithoutPassword });
 			} catch (err) {
 				if (err instanceof ResourceNotFoundError) {
-					return reply.status(404).send({ message: err.message })
+					return reply.status(404).send({ message: err.message });
 				}
 
-				throw err
+				throw err;
 			}
 		},
-	})
+	});
 }

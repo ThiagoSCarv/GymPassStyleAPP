@@ -1,9 +1,9 @@
-import type { FastifyInstance } from "fastify"
-import { type ZodTypeProvider } from "fastify-type-provider-zod"
-import { z } from "zod"
-import { makeAuthenticateUseCase } from "@/use-cases/factories/make-authenticate-use-case.js"
-import { InvalidCredentialsError } from "@/use-cases/errors/invalid-credentials-error.js"
-import { env } from "@/env/index.js"
+import type { FastifyInstance } from "fastify";
+import { type ZodTypeProvider } from "fastify-type-provider-zod";
+import { z } from "zod";
+import { makeAuthenticateUseCase } from "@/use-cases/factories/make-authenticate-use-case.js";
+import { InvalidCredentialsError } from "@/use-cases/errors/invalid-credentials-error.js";
+import { env } from "@/env/index.js";
 
 export async function authenticateRoute(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().route({
@@ -22,22 +22,22 @@ export async function authenticateRoute(app: FastifyInstance) {
 			},
 		},
 		handler: async (request, reply) => {
-			const { email, password } = request.body
+			const { email, password } = request.body;
 
-			const authenticateUseCase = makeAuthenticateUseCase()
+			const authenticateUseCase = makeAuthenticateUseCase();
 
 			try {
-				const { user } = await authenticateUseCase.execute({ email, password })
+				const { user } = await authenticateUseCase.execute({ email, password });
 
 				const token = await reply.jwtSign(
 					{ role: user.role },
 					{ sign: { sub: user.id, expiresIn: "1h", aud: "access" } },
-				)
+				);
 
 				const refreshToken = await reply.jwtSign(
 					{ role: user.role },
 					{ sign: { sub: user.id, expiresIn: "30d", aud: "refresh" } },
-				)
+				);
 
 				return reply
 					.setCookie("refreshToken", refreshToken, {
@@ -48,14 +48,14 @@ export async function authenticateRoute(app: FastifyInstance) {
 						maxAge: 60 * 60 * 24 * 30,
 					})
 					.status(200)
-					.send({ token })
+					.send({ token });
 			} catch (err) {
 				if (err instanceof InvalidCredentialsError) {
-					return reply.status(401).send({ message: err.message })
+					return reply.status(401).send({ message: err.message });
 				}
 
-				throw err
+				throw err;
 			}
 		},
-	})
+	});
 }

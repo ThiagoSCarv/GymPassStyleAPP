@@ -1,7 +1,7 @@
-import type { FastifyInstance } from "fastify"
-import { type ZodTypeProvider } from "fastify-type-provider-zod"
-import { z } from "zod"
-import { makeFetchNearbyGymsUseCase } from "@/use-cases/factories/make-fetch-nearby-gyms-use-case.js"
+import type { FastifyInstance } from "fastify";
+import { type ZodTypeProvider } from "fastify-type-provider-zod";
+import { z } from "zod";
+import { makeFetchNearbyGymsUseCase } from "@/use-cases/factories/make-fetch-nearby-gyms-use-case.js";
 
 export async function fetchNearbyGymsRoute(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().route({
@@ -31,16 +31,16 @@ export async function fetchNearbyGymsRoute(app: FastifyInstance) {
 			},
 		},
 		handler: async (request, reply) => {
-			const { latitude, longitude } = request.query
+			const { latitude, longitude } = request.query;
 
-			const fetchNearbyGymsUseCase = makeFetchNearbyGymsUseCase()
+			const fetchNearbyGymsUseCase = makeFetchNearbyGymsUseCase();
 
 			const { gyms } = await fetchNearbyGymsUseCase.execute({
 				userLatitude: latitude,
 				userLongitude: longitude,
-			})
+			});
 
-			return reply.status(200).send({ gyms })
+			return reply.status(200).send({ gyms });
 		},
-	})
+	});
 }

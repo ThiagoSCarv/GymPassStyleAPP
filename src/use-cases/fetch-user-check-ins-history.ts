@@ -1,13 +1,13 @@
-import type { CheckIn } from "@prisma/client"
-import type { CheckInsRepository } from "@/repositories/check-ins-repository.js"
+import type { CheckIn } from "@prisma/client";
+import type { CheckInsRepository } from "@/repositories/check-ins-repository.js";
 
 interface FetchUserCheckInsHistoryUseCaseRequest {
-	userId: string
-	page: number
+	userId: string;
+	page: number;
 }
 
 interface FetchUserCheckInsHistoryUseCaseResponse {
-	checkIns: CheckIn[]
+	checkIns: CheckIn[];
 }
 
 export class FetchUserCheckInsHistoryUseCase {
@@ -17,8 +17,11 @@ export class FetchUserCheckInsHistoryUseCase {
 		userId,
 		page,
 	}: FetchUserCheckInsHistoryUseCaseRequest): Promise<FetchUserCheckInsHistoryUseCaseResponse> {
-		const checkIns = await this.checkInsRepository.findManyByUserId(userId, page)
+		const checkIns = await this.checkInsRepository.findManyByUserId(
+			userId,
+			page,
+		);
 
-		return { checkIns }
+		return { checkIns };
 	}
 }

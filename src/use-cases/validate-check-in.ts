@@ -1,17 +1,17 @@
-import type { CheckIn } from "@prisma/client"
-import dayjs from "dayjs"
-import type { CheckInsRepository } from "@/repositories/check-ins-repository.js"
-import { ResourceNotFoundError } from "./errors/resource-not-found-error.js"
-import { LateCheckInValidationError } from "./errors/late-check-in-validation-error.js"
+import type { CheckIn } from "@prisma/client";
+import dayjs from "dayjs";
+import type { CheckInsRepository } from "@/repositories/check-ins-repository.js";
+import { ResourceNotFoundError } from "./errors/resource-not-found-error.js";
+import { LateCheckInValidationError } from "./errors/late-check-in-validation-error.js";
 
-const MAX_VALIDATION_TIME_IN_MINUTES = 20
+const MAX_VALIDATION_TIME_IN_MINUTES = 20;
 
 interface ValidateCheckInUseCaseRequest {
-	checkInId: string
+	checkInId: string;
 }
 
 interface ValidateCheckInUseCaseResponse {
-	checkIn: CheckIn
+	checkIn: CheckIn;
 }
 
 export class ValidateCheckInUseCase {
@@ -20,20 +20,23 @@ export class ValidateCheckInUseCase {
 	async execute({
 		checkInId,
 	}: ValidateCheckInUseCaseRequest): Promise<ValidateCheckInUseCaseResponse> {
-		const checkIn = await this.checkInsRepository.findById(checkInId)
+		const checkIn = await this.checkInsRepository.findById(checkInId);
 
 		if (!checkIn) {
-			throw new ResourceNotFoundError()
+			throw new ResourceNotFoundError();
 		}
 
-		const minutesSinceCreation = dayjs(new Date()).diff(checkIn.created_at, "minute")
+		const minutesSinceCreation = dayjs(new Date()).diff(
+			checkIn.created_at,
+			"minute",
+		);
 
 		if (minutesSinceCreation > MAX_VALIDATION_TIME_IN_MINUTES) {
-			throw new LateCheckInValidationError()
+			throw new LateCheckInValidationError();
 		}
 
-		checkIn.validated_at = new Date()
+		checkIn.validated_at = new Date();
 
-		return { checkIn: await this.checkInsRepository.save(checkIn) }
+		return { checkIn: await this.checkInsRepository.save(checkIn) };
 	}
 }

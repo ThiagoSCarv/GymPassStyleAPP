@@ -1,20 +1,20 @@
-import type { UsersRepository } from "@/repositories/users-repository.js"
-import { ResourceNotFoundError } from "./errors/resource-not-found-error.js"
+import type { UsersRepository } from "@/repositories/users-repository.js";
+import { ResourceNotFoundError } from "./errors/resource-not-found-error.js";
 
 interface GetUserProfileUseCaseRequest {
-	userId: string
+	userId: string;
 }
 
 export class GetUserProfileUseCase {
 	constructor(private usersRepository: UsersRepository) {}
 
 	async execute({ userId }: GetUserProfileUseCaseRequest) {
-		const user = await this.usersRepository.findById(userId)
+		const user = await this.usersRepository.findById(userId);
 
 		if (!user) {
-			throw new ResourceNotFoundError()
+			throw new ResourceNotFoundError();
 		}
 
-		return { user }
+		return { user };
 	}
 }

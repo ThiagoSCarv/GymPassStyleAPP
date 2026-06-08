@@ -1,7 +1,7 @@
-import { hash } from "bcryptjs"
-import type { FastifyInstance } from "fastify"
-import supertest from "supertest"
-import { prisma } from "@/lib/prisma.js"
+import { hash } from "bcryptjs";
+import type { FastifyInstance } from "fastify";
+import supertest from "supertest";
+import { prisma } from "@/lib/prisma.js";
 
 export async function createAndAuthenticateUser(
 	app: FastifyInstance,
@@ -14,14 +14,14 @@ export async function createAndAuthenticateUser(
 			password_hash: await hash("123456", 6),
 			role: isAdmin ? "ADMIN" : "MEMBER",
 		},
-	})
+	});
 
 	const authResponse = await supertest(app.server).post("/sessions").send({
 		email: "johndoe@example.com",
 		password: "123456",
-	})
+	});
 
-	const { token } = authResponse.body
+	const { token } = authResponse.body;
 
-	return { token }
+	return { token };
 }

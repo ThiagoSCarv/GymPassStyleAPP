@@ -1,9 +1,9 @@
-import type { FastifyReply, FastifyRequest } from "fastify"
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 export async function verifyJwt(request: FastifyRequest, reply: FastifyReply) {
 	try {
-		await request.jwtVerify({ verify: { allowedAud: "access" } })
+		await request.jwtVerify({ verify: { allowedAud: "access" } });
 	} catch {
-		return reply.status(401).send({ message: "Unauthorized." })
+		return reply.status(401).send({ message: "Unauthorized." });
 	}
 }

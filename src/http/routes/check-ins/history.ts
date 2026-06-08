@@ -1,7 +1,7 @@
-import type { FastifyInstance } from "fastify"
-import { type ZodTypeProvider } from "fastify-type-provider-zod"
-import { z } from "zod"
-import { makeFetchUserCheckInsHistoryUseCase } from "@/use-cases/factories/make-fetch-user-check-ins-history-use-case.js"
+import type { FastifyInstance } from "fastify";
+import { type ZodTypeProvider } from "fastify-type-provider-zod";
+import { z } from "zod";
+import { makeFetchUserCheckInsHistoryUseCase } from "@/use-cases/factories/make-fetch-user-check-ins-history-use-case.js";
 
 export async function fetchCheckInsHistoryRoute(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().route({
@@ -29,14 +29,14 @@ export async function fetchCheckInsHistoryRoute(app: FastifyInstance) {
 			},
 		},
 		handler: async (request, reply) => {
-			const { sub: userId } = request.user
-			const { page } = request.query
+			const { sub: userId } = request.user;
+			const { page } = request.query;
 
-			const fetchHistoryUseCase = makeFetchUserCheckInsHistoryUseCase()
+			const fetchHistoryUseCase = makeFetchUserCheckInsHistoryUseCase();
 
-			const { checkIns } = await fetchHistoryUseCase.execute({ userId, page })
+			const { checkIns } = await fetchHistoryUseCase.execute({ userId, page });
 
-			return reply.status(200).send({ checkIns })
+			return reply.status(200).send({ checkIns });
 		},
-	})
+	});
 }

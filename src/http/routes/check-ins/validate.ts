@@ -1,9 +1,9 @@
-import type { FastifyInstance } from "fastify"
-import { type ZodTypeProvider } from "fastify-type-provider-zod"
-import { z } from "zod"
-import { makeValidateCheckInUseCase } from "@/use-cases/factories/make-validate-check-in-use-case.js"
-import { LateCheckInValidationError } from "@/use-cases/errors/late-check-in-validation-error.js"
-import { ResourceNotFoundError } from "@/use-cases/errors/resource-not-found-error.js"
+import type { FastifyInstance } from "fastify";
+import { type ZodTypeProvider } from "fastify-type-provider-zod";
+import { z } from "zod";
+import { makeValidateCheckInUseCase } from "@/use-cases/factories/make-validate-check-in-use-case.js";
+import { LateCheckInValidationError } from "@/use-cases/errors/late-check-in-validation-error.js";
+import { ResourceNotFoundError } from "@/use-cases/errors/resource-not-found-error.js";
 
 export async function validateCheckInRoute(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().route({
@@ -32,23 +32,23 @@ export async function validateCheckInRoute(app: FastifyInstance) {
 			},
 		},
 		handler: async (request, reply) => {
-			const { checkInId } = request.params
+			const { checkInId } = request.params;
 
-			const validateCheckInUseCase = makeValidateCheckInUseCase()
+			const validateCheckInUseCase = makeValidateCheckInUseCase();
 
 			try {
-				const { checkIn } = await validateCheckInUseCase.execute({ checkInId })
+				const { checkIn } = await validateCheckInUseCase.execute({ checkInId });
 
-				return reply.status(200).send({ checkIn })
+				return reply.status(200).send({ checkIn });
 			} catch (err) {
 				if (err instanceof ResourceNotFoundError) {
-					return reply.status(404).send({ message: err.message })
+					return reply.status(404).send({ message: err.message });
 				}
 				if (err instanceof LateCheckInValidationError) {
-					return reply.status(400).send({ message: err.message })
+					return reply.status(400).send({ message: err.message });
 				}
-				throw err
+				throw err;
 			}
 		},
-	})
+	});
 }

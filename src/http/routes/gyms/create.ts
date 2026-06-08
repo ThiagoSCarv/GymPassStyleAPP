@@ -1,7 +1,7 @@
-import type { FastifyInstance } from "fastify"
-import { type ZodTypeProvider } from "fastify-type-provider-zod"
-import { z } from "zod"
-import { makeCreateGymUseCase } from "@/use-cases/factories/make-create-gym-use-case.js"
+import type { FastifyInstance } from "fastify";
+import { type ZodTypeProvider } from "fastify-type-provider-zod";
+import { z } from "zod";
+import { makeCreateGymUseCase } from "@/use-cases/factories/make-create-gym-use-case.js";
 
 export async function createGymRoute(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().route({
@@ -24,9 +24,9 @@ export async function createGymRoute(app: FastifyInstance) {
 			},
 		},
 		handler: async (request, reply) => {
-			const { title, description, phone, latitude, longitude } = request.body
+			const { title, description, phone, latitude, longitude } = request.body;
 
-			const createGymUseCase = makeCreateGymUseCase()
+			const createGymUseCase = makeCreateGymUseCase();
 
 			await createGymUseCase.execute({
 				title,
@@ -34,9 +34,9 @@ export async function createGymRoute(app: FastifyInstance) {
 				phone,
 				latitude,
 				longitude,
-			})
+			});
 
-			return reply.status(201).send()
+			return reply.status(201).send();
 		},
-	})
+	});
 }
